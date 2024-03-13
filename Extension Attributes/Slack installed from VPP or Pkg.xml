@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
+<displayName>Slack installed from ABM</displayName>
+<description/>
+<dataType>string</dataType>
+<scriptContentsMac>#!/bin/bash&#13;
+&#13;
+&#13;
+if [ ! -d /Applications/Slack.app/Contents/_MASReceipt ]; then&#13;
+	echo "&lt;result&gt;No&lt;/result&gt;"&#13;
+  else&#13;
+    echo "&lt;result&gt;Yes&lt;/result&gt;"&#13;
+    &#13;
+fi&#13;
+&#13;
+exit 0</scriptContentsMac>
+</extensionAttribute>
