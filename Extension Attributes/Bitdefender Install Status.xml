@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
+<displayName>Bitdefender Install Status</displayName>
+<description/>
+<dataType>string</dataType>
+<scriptContentsMac>#!/bin/sh&#13;
+&#13;
+FILE=/Library/Bitdefender/AVP/EndpointSecurityforMac.app&#13;
+&#13;
+if [[ -f "$FILE" ]]; then&#13;
+echo "&lt;result&gt;Bitdefender Installed&lt;/result&gt;"&#13;
+else&#13;
+	echo "&lt;result&gt;Bitdefender Not Installed&lt;/result&gt;"&#13;
+fi</scriptContentsMac>
+</extensionAttribute>

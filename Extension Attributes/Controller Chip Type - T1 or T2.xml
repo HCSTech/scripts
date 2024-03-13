@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
+<displayName>Controller Chip Type - T1 or T2</displayName>
+<description>Will report on T1 or T2 chip</description>
+<dataType>string</dataType>
+<scriptContentsMac>#!/bin/bash&#13;
+Chip="$(/usr/sbin/system_profiler SPiBridgeDataType | /usr/bin/grep 'Model Name' | awk '{ for (i=3; i&lt;=NF; i++) printf("%s ",$i) }END{ print"" }')"&#13;
+echo "&lt;result&gt;$Chip&lt;/result&gt;"</scriptContentsMac>
+</extensionAttribute>

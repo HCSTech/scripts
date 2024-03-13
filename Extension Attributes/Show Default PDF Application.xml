@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
+<displayName>Show Default PDF Application</displayName>
+<description/>
+<dataType>string</dataType>
+<scriptContentsMac>#!/bin/zsh&#13;
+&#13;
+#This script to check to see which application is the default to open PDF files.  Adobe Acrobat Pro or Preview.&#13;
+&#13;
+consoleUser=$( echo "show State:/Users/ConsoleUser" | scutil | awk '/Name :/ &amp;&amp; ! /loginwindow/ { print $3 }' )&#13;
+/bin/echo "Current logged in user is: $consoleUser"&#13;
+&#13;
+launchServicesInfo=$( /usr/bin/defaults read "/Users/$consoleUser/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist" )&#13;
+		&#13;
+AdobePDF=$(/usr/bin/grep -A 4 "com.adobe.pdf" &lt;&lt;&lt; "$launchServicesInfo" | tail -n 1 | /usr/bin/awk -F \" '{ print $2 }')&#13;
+&#13;
+PreviewPDF=$(/usr/bin/grep -A 4 "com.apple.preview" &lt;&lt;&lt; "$launchServicesInfo" | grep -ow "com.apple.preview")&#13;
+&#13;
+if [[ $AdobePDF == "com.adobe.acrobat.pro" ]]; then&#13;
+	echo "&lt;result&gt;Adobe Acrobat Pro&lt;/result&gt;"&#13;
+elif [[ $PreviewPDF == "com.apple.preview" ]]; then&#13;
+	echo "&lt;result&gt;Preview&lt;/result&gt;"&#13;
+fi&#13;
+&#13;
+exit 0</scriptContentsMac>
+</extensionAttribute>
