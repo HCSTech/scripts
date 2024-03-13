@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
+<displayName>Days since last reboot</displayName>
+<description>This will calculate the amount of time since the last reboot of a Mac computer.  It's used as criteria for a smart group that will prompt a user to reboot after 14 days of uptime.</description>
+<dataType>number</dataType>
+<scriptContentsMac>#!/bin/bash&#13;
+days=`uptime | awk '{ print $4 }' | sed 's/,//g'`&#13;
+num=`uptime | awk '{ print $3 }'`&#13;
+# Check if more than a day&#13;
+if [ $days = "days" ];&#13;
+then&#13;
+# More than a day, return the number of days&#13;
+echo "&lt;result&gt;$num&lt;/result&gt;"&#13;
+else&#13;
+# Less than a day return 1&#13;
+echo "&lt;result&gt;1&lt;/result&gt;"&#13;
+fi</scriptContentsMac>
+</extensionAttribute>

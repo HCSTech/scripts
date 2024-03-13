@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
+<displayName>Jamf Protect - Threat Prevention Version</displayName>
+<description>Displays the Threat Prevention Version of Jamf Protect</description>
+<dataType>string</dataType>
+<scriptContentsMac>#!/bin/sh&#13;
+&#13;
+#Jamf Protect Location&#13;
+jamfProtectBinaryLocation="/usr/local/bin/protectctl"&#13;
+&#13;
+if [ -f "$jamfProtectBinaryLocation" ]; then&#13;
+    jamfProtectThreatPreventionVersion=$("$jamfProtectBinaryLocation" info | awk -F 'Threat Prevention Version:' '{print $2}' | xargs)&#13;
+else&#13;
+	jamfProtectThreatPreventionVersion="Protect binary not found"&#13;
+fi&#13;
+&#13;
+echo "&lt;result&gt;$jamfProtectThreatPreventionVersion&lt;/result&gt;"&#13;
+</scriptContentsMac>
+</extensionAttribute>

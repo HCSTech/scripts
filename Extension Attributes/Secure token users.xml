@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
+<displayName>Secure token users</displayName>
+<description>This will show all users that have a secure token.</description>
+<dataType>string</dataType>
+<scriptContentsMac>#!/bin/zsh&#13;
+&#13;
+# Extension attribute to report all user accounts who have a secure token&#13;
+# If a user is found to have a secure token, the results will be displayed as:&#13;
+#   Admins: user1, user2 (or "None" if none found)&#13;
+#   Non-Admins: user1, user2 (or "None" if none found)&#13;
+#&#13;
+# If no user is found to have a secure token, the result will be:&#13;
+#   "No Secure Token Users"&#13;
+# If an unsupported file system is found, the result will be:&#13;
+#   Unsupported File System: (File System Type)&#13;
+&#13;
+# Variable to determine File System Personality&#13;
+fsType="$(/usr/sbin/diskutil info / | /usr/bin/awk 'sub(/File System Personality: /,""){print $0}')"&#13;
+&#13;
+if [[ "$fsType" != *APFS* ]]; then&#13;
+    echo "&lt;result&gt;Unsupported File System: $fsType&lt;/result&gt;"&#13;
+    exit 0&#13;
+fi&#13;
+&#13;
+secureTokenAdmins=()&#13;
+secureTokenUsers=()&#13;
+&#13;
+# Loop through UUIDs of secure token holders&#13;
+for uuid in ${$(/usr/sbin/diskutil apfs listUsers / | /usr/bin/awk '/\+\-\-/ {print $2}')}; do&#13;
+    username="$(/usr/bin/dscl . -search /Users GeneratedUID ${uuid} | /usr/bin/awk 'NR==1{print $1}')"&#13;
+    &#13;
+    if /usr/sbin/dseditgroup -o checkmember -m "$username" admin &amp;&gt;/dev/null; then&#13;
+        secureTokenAdmins+=($username)&#13;
+    else&#13;
+        secureTokenUsers+=($username)&#13;
+    fi&#13;
+done&#13;
+&#13;
+if [[ -z ${secureTokenAdmins[@]} ]]; then&#13;
+    stList="$(echo "Admins: None")"&#13;
+else&#13;
+    stList="$(echo "Admins: ${secureTokenAdmins[1]}")"&#13;
+    &#13;
+    for user in ${secureTokenAdmins[@]:1}; do&#13;
+        stList+=", $user"&#13;
+    done&#13;
+fi&#13;
+&#13;
+if [[ -z ${secureTokenAdmins[@]} ]] &amp;&amp; [[ -z ${secureTokenUsers[@]} ]]; then&#13;
+    stList="$(echo "No Secure Token Users")"&#13;
+elif [[ -z ${secureTokenUsers[@]} ]]; then&#13;
+    stList+="\n$(echo "Non-Admins: None")"&#13;
+else&#13;
+    stList+="\n$(echo "Non-Admins: ${secureTokenUsers[1]}")"&#13;
+    &#13;
+    for user in ${secureTokenUsers[@]:1}; do&#13;
+        stList+=", $user"&#13;
+    done&#13;
+fi&#13;
+&#13;
+echo "&lt;result&gt;$stList&lt;/result&gt;"</scriptContentsMac>
+</extensionAttribute>

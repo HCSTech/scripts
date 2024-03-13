@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
+<displayName>Users without secure token</displayName>
+<description/>
+<dataType>string</dataType>
+<scriptContentsMac>#!/bin/bash&#13;
+&#13;
+#Make sure OS is 10.13 or later, otherwise exit.  Secure Token was introduced in 10.13&#13;
+osvers=$(sw_vers -productVersion | awk -F. '{print $2}')&#13;
+	if [[ $osvers -lt 13 ]]; then&#13;
+		exit&#13;
+	fi&#13;
+&#13;
+#Get list of local os x user accounts&#13;
+localUsers=$(/usr/bin/dscl /Local/Default -list /Users uid | awk '$2 &gt;= 100 &amp;&amp; $0 !~ /^_/ { print $1 }')&#13;
+&#13;
+#Find users with no secure token&#13;
+result=$(for i in ${localUsers[@]}&#13;
+do&#13;
+/usr/sbin/sysadminctl interactive -secureTokenStatus $i 2&gt;&amp;1 | grep DISABLED | awk '{ print $4,$5,$6,$7,$8,$9,$10,$11 }'&#13;
+done)&#13;
+&#13;
+#Send result to Jamf&#13;
+echo "&lt;result&gt;$result&lt;/result&gt;"</scriptContentsMac>
+</extensionAttribute>
